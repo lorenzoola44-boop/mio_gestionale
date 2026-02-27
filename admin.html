@@ -1,0 +1,83 @@
+!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pannello Admin - Prenotazioni</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Lista Appuntamenti</h1>
+            <button onclick="caricaPrenotazioni()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Aggiorna</button>
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <table class="min-w-full leading-normal">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm">
+                        <th class="py-3 px-6 text-left">Cliente</th>
+                        <th class="py-3 px-6 text-left">Servizio</th>
+                        <th class="py-3 px-6 text-left">Data</th>
+                        <th class="py-3 px-6 text-left">Ora</th>
+                        <th class="py-3 px-6 text-center">Azioni</th>
+                    </tr>
+                </thead>
+                <tbody id="tabellaCorpo" class="text-gray-700">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURAZIONE SUPABASE (Usa gli stessi dati di index.html)
+        const SUPABASE_URL = https://nbkmcedwqpadafdguuly.supabase.co;
+        const SUPABASE_KEY = sb_publishable_KknR2sOfNrlpZxo87hQxcg_62VbFoKe;
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function caricaPrenotazioni() {
+            const tabella = document.getElementById('tabellaCorpo');
+            tabella.innerHTML = '<tr><td colspan="5" class="text-center py-4">Caricamento...</td></tr>';
+
+            const { data, error } = await supabase
+                .from('prenotazioni')
+                .select('*')
+                .order('data_prenotazione', { ascending: true });
+
+            if (error) {
+                alert("Errore nel caricamento: " + error.message);
+                return;
+            }
+
+            tabella.innerHTML = '';
+            data.forEach(p => {
+                tabella.innerHTML += `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="py-4 px-6">${p.cliente_nome}</td>
+                        <td class="py-4 px-6">${p.servizio}</td>
+                        <td class="py-4 px-6">${p.data_prenotazione}</td>
+                        <td class="py-4 px-6">${p.ora_prenotazione}</td>
+                        <td class="py-4 px-6 text-center">
+                            <button onclick="elimina('${p.id}')" class="text-red-600 hover:text-red-900 font-bold">Elimina</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function elimina(id) {
+            if(confirm("Vuoi davvero eliminare questa prenotazione?")) {
+                const { error } = await supabase.from('prenotazioni').delete().eq('id', id);
+                if (error) alert(error.message);
+                else caricaPrenotazioni();
+            }
+        }
+
+        // Carica i dati all'apertura
+        caricaPrenotazioni();
+    </script>
+</body>
+</html>
