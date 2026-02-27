@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pannello Admin - Prenotazioni</title>
+    <title>Pannello Admin - prenotazioni</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -12,7 +12,7 @@
     <div class="max-w-5xl mx-auto">
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-3xl font-bold text-gray-800">Lista Appuntamenti</h1>
-            <button onclick="caricaPrenotazioni()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Aggiorna</button>
+            <button onclick="caricaprenotazioni()" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Aggiorna</button>
         </div>
 
         <div class="bg-white shadow-md rounded-lg overflow-hidden">
@@ -38,7 +38,7 @@
         const SUPABASE_KEY = sb_publishable_KknR2sOfNrlpZxo87hQxcg_62VbFoKe;
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        async function caricaPrenotazioni() {
+        async function caricaprenotazioni() {
             const tabella = document.getElementById('tabellaCorpo');
             tabella.innerHTML = '<tr><td colspan="5" class="text-center py-4">Caricamento...</td></tr>';
 
@@ -72,12 +72,12 @@
             if(confirm("Vuoi davvero eliminare questa prenotazione?")) {
                 const { error } = await supabase.from('prenotazioni').delete().eq('id', id);
                 if (error) alert(error.message);
-                else caricaPrenotazioni();
+                else caricaprenotazioni();
             }
         }
 
         // Carica i dati all'apertura
-        caricaPrenotazioni();
+        caricaprenotazioni();
     </script>
 </body>
 </html>
