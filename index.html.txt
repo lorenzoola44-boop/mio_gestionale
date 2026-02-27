@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prenota il tuo Appuntamento</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-6 text-gray-800 text-center">Prenota Appuntamento</h1>
+        
+        <form id="bookingForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Nome Completo</label>
+                <input type="text" id="nome" required class="mt-1 block w-full border border-gray-300 rounded-md p-2 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Servizio</label>
+                <select id="servizio" class="mt-1 block w-full border border-gray-300 rounded-md p-2 shadow-sm">
+                    <option>Consulenza Base</option>
+                    <option>Trattamento Full</option>
+                    <option>Check-up veloce</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Data</label>
+                    <input type="date" id="data" required class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Ora</label>
+                    <input type="time" id="ora" required class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-md hover:bg-blue-700 transition">Conferma Prenotazione</button>
+        </form>
+        <p id="messaggio" class="mt-4 text-center text-sm font-medium"></p>
+    </div>
+
+    <script>
+        // CONFIGURAZIONE SUPABASE (Sostituisci con i tuoi dati)
+        const SUPABASE_URL = https://nbkmcedwqpadafdguuly.supabase.co;
+        const SUPABASE_KEY = sb_publishable_KknR2sOfNrlpZxo87hQxcg_62VbFoKe;
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const form = document.getElementById('bookingForm');
+        const messaggio = document.getElementById('messaggio');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            messaggio.innerText = "Invio in corso...";
+            
+            const { data, error } = await supabase
+                .from('prenozazioni') // Assicurati che il nome della tabella sia identico a quello su Supabase
+                .insert([{ 
+                    cliente_nome: document.getElementById('nome').value,
+                    servizio: document.getElementById('servizio').value,
+                    data_prenotazione: document.getElementById('data').value,
+                    ora_prenotazione: document.getElementById('ora').value
+                }]);
+
+            if (error) {
+                messaggio.innerText = "Errore: " + error.message;
+                messaggio.className = "mt-4 text-center text-red-500";
+            } else {
+                messaggio.innerText = "Prenotazione salvata con successo!";
+                messaggio.className = "mt-4 text-center text-green-500";
+                form.reset();
+            }
+        });
+    </script>
+</body>
+</html>
